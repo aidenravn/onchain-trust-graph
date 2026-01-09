@@ -1,79 +1,76 @@
-import { ethers } from "ethers";
-import { computeRisk } from "../risk/score";
+import { TrustGraph } from "./graph"
 
-const ERC20_ABI = [
-  "function allowance(address owner, address spender) view returns (uint256)"
-];
+/*
+    OCG Risk Engine
 
-const OCG_ABI = [
-  "function identityRoot(address) view returns (bytes32)"
-];
+    Computes wallet trust using:
+    - ArcVault contribution NFTs
+    - Social continuity
+    - Approver reputation
+*/
 
-// example known hacked clusters (demo MVP)
-const DRAINED_CONTRACTS = [
-  "0xdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef",
-  "0x000000000000000000000000000000000000dEaD"
-];
+export type WalletRisk = {
+    wallet: string
+    trust: number        // 0 → 100
+    sybil: boolean
+    signals: string[]
+}
 
-export async function getRiskScore(
-  user: string,
-  provider: ethers.Provider,
-  ocgRegistry: string
-) {
-  // 1️⃣ Fetch recent transactions
-  const txs = await provider.getHistory(user);
+export class RiskEngine {
+    graph: TrustGraph
 
-  // 2️⃣ Count unknown contracts interacted with
-  const knownContracts = new Set<string>();
-  let unknownInteractions = 0;
-
-  for (const tx of txs) {
-    if (tx.to) {
-      if (!knownContracts.has(tx.to)) {
-        knownContracts.add(tx.to);
-        unknownInteractions++;
-      }
+    constructor(graph: TrustGraph) {
+        this.graph = graph
     }
-  }
 
-  // 3️⃣ Check drain proximity
-  let drainLinks = 0;
-  for (const tx of txs) {
-    if (tx.to && DRAINED_CONTRACTS.includes(tx.to.toLowerCase())) {
-      drainLinks++;
+    scoreWallet(wallet: string): WalletRisk {
+        const nodes = this.graph.findByOwner(wallet)
+
+        if (nodes.length === 0) {
+            return {
+                wallet,
+                trust: 0,
+                sybil: true,
+                signals: ["no_contributions"]
+            }
+        }
+
+        let trust = 0
+        let max = 0
+        const signals: string[] = []
+
+        for (const n of nodes) {
+            max += 100
+
+            // ArcVault NFTs = proof of contribution
+            if (n.data.type === "arcvault") {
+                trust += n.weight
+                signals.push("arcvault")
+            }
+
+            // Bonus if approved by high-rep signer
+            const approverTrust = this.graph.trustOf(n.data.approver)
+            trust += approverTrust * 0.2
+
+            if (approverTrust > 50) {
+                signals.push("verified_approver")
+            }
+        }
+
+        const normalized = Math.min(100, Math.round((trust / max) * 100))
+
+        // Sybil heuristics
+        let sybil = false
+
+        if (normalized < 20) sybil = true
+        if (nodes.length > 5 && normalized < 40) sybil = true
+        if (nodes.length === 1 && nodes[0].weight < 30) sybil = true
+
+        return {
+            wallet,
+            trust: normalized,
+            sybil,
+            signals
+        }
     }
-  }
-
-  // 4️⃣ Fetch guardians from OCG
-  const ocg = new ethers.Contract(ocgRegistry, OCG_ABI, provider);
-  const root = await ocg.identityRoot(user);
-
-  // Guardian count is inferred from root (for MVP we approximate)
-  const guardianCount = root !== ethers.ZeroHash ? 2 : 0;
-
-  // 5️⃣ Infinite approval scan (simplified)
-  let infiniteApprovals = 0;
-  for (const tx of txs.slice(0, 20)) {
-    if (!tx.to) continue;
-
-    try {
-      const token = new ethers.Contract(tx.to, ERC20_ABI, provider);
-      const allowance = await token.allowance(user, tx.to);
-      if (allowance > ethers.parseUnits("100000000", 18)) {
-        infiniteApprovals++;
-      }
-    } catch {}
-  }
-
-  // 6️⃣ Time since last recovery
-  const lastRecoveryDays = root === ethers.ZeroHash ? 999 : 30;
-
-  // 7️⃣ Final risk score
-  return computeRisk({
-    infiniteApprovals,
-    unknownContracts: unknownInteractions,
-    drainLinks,
-    guardians: guardianCount,
-    lastRecoveryDays
-  });
 }
