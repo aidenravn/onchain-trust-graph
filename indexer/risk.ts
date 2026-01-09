@@ -1,76 +1,104 @@
-import { TrustGraph } from "./graph"
+/**
+ * OCG Risk Engine
+ * Detects sybil clusters, funding attacks, and reputation gaming
+ */
 
-/*
-    OCG Risk Engine
+export type WalletStats = {
+    wallet: string
+    inboundTx: number
+    outboundTx: number
+    firstSeen: number
+    fundingSources: Set<string>
+    contributionScore: number
+}
 
-    Computes wallet trust using:
-    - ArcVault contribution NFTs
-    - Social continuity
-    - Approver reputation
-*/
-
-export type WalletRisk = {
+export type RiskScore = {
     wallet: string
     trust: number        // 0 → 100
-    sybil: boolean
-    signals: string[]
+    risk: number         // 0 → 100
+    flags: string[]
 }
 
 export class RiskEngine {
-    graph: TrustGraph
+    wallets = new Map<string, WalletStats>()
 
-    constructor(graph: TrustGraph) {
-        this.graph = graph
+    /**
+     * Called by indexer when new tx / NFT / contribution happens
+     */
+    registerActivity(
+        wallet: string,
+        from: string | null,
+        timestamp: number,
+        contributionScore = 0
+    ) {
+        if (!this.wallets.has(wallet)) {
+            this.wallets.set(wallet, {
+                wallet,
+                inboundTx: 0,
+                outboundTx: 0,
+                firstSeen: timestamp,
+                fundingSources: new Set(),
+                contributionScore: 0
+            })
+        }
+
+        const w = this.wallets.get(wallet)!
+
+        if (from) {
+            w.inboundTx++
+            w.fundingSources.add(from)
+        }
+
+        w.contributionScore += contributionScore
     }
 
-    scoreWallet(wallet: string): WalletRisk {
-        const nodes = this.graph.findByOwner(wallet)
+    /**
+     * Main scoring function
+     */
+    scoreWallet(wallet: string): RiskScore {
+        const w = this.wallets.get(wallet)
 
-        if (nodes.length === 0) {
+        if (!w) {
             return {
                 wallet,
                 trust: 0,
-                sybil: true,
-                signals: ["no_contributions"]
+                risk: 100,
+                flags: ["no_history"]
             }
         }
 
-        let trust = 0
-        let max = 0
-        const signals: string[] = []
+        let trust = 50
+        let risk = 0
+        const flags: string[] = []
 
-        for (const n of nodes) {
-            max += 100
+        // 1. Contribution power
+        trust += Math.min(40, w.contributionScore / 10)
 
-            // ArcVault NFTs = proof of contribution
-            if (n.data.type === "arcvault") {
-                trust += n.weight
-                signals.push("arcvault")
-            }
+        // 2. Age bonus
+        const ageDays = (Date.now() / 1000 - w.firstSeen) / 86400
+        trust += Math.min(20, ageDays)
 
-            // Bonus if approved by high-rep signer
-            const approverTrust = this.graph.trustOf(n.data.approver)
-            trust += approverTrust * 0.2
-
-            if (approverTrust > 50) {
-                signals.push("verified_approver")
-            }
+        // 3. Sybil detection: too many wallets funded by same source
+        if (w.fundingSources.size === 1 && w.inboundTx > 5) {
+            risk += 50
+            flags.push("single_funder_cluster")
         }
 
-        const normalized = Math.min(100, Math.round((trust / max) * 100))
+        // 4. New wallet + high activity = suspicious
+        if (ageDays < 2 && w.inboundTx > 3) {
+            risk += 30
+            flags.push("fresh_wallet_burst")
+        }
 
-        // Sybil heuristics
-        let sybil = false
-
-        if (normalized < 20) sybil = true
-        if (nodes.length > 5 && normalized < 40) sybil = true
-        if (nodes.length === 1 && nodes[0].weight < 30) sybil = true
+        // Normalize
+        trust = Math.max(0, Math.min(100, trust - risk))
+        risk = Math.max(0, Math.min(100, risk))
 
         return {
             wallet,
-            trust: normalized,
-            sybil,
-            signals
+            trust,
+            risk,
+            flags
         }
     }
 }
