@@ -1,104 +1,100 @@
+import { TrustGraph } from "./graph"
+
 /**
  * OCG Risk Engine
- * Detects sybil clusters, funding attacks, and reputation gaming
+ * Detects Sybil patterns & computes wallet trust
  */
 
-export type WalletStats = {
-    wallet: string
-    inboundTx: number
-    outboundTx: number
-    firstSeen: number
-    fundingSources: Set<string>
-    contributionScore: number
-}
-
-export type RiskScore = {
-    wallet: string
-    trust: number        // 0 → 100
-    risk: number         // 0 → 100
+export type WalletTrust = {
+    address: string
+    trust: number
+    risk: number
     flags: string[]
 }
 
 export class RiskEngine {
-    wallets = new Map<string, WalletStats>()
+    graph: TrustGraph
 
-    /**
-     * Called by indexer when new tx / NFT / contribution happens
-     */
-    registerActivity(
-        wallet: string,
-        from: string | null,
-        timestamp: number,
-        contributionScore = 0
-    ) {
-        if (!this.wallets.has(wallet)) {
-            this.wallets.set(wallet, {
-                wallet,
-                inboundTx: 0,
-                outboundTx: 0,
-                firstSeen: timestamp,
-                fundingSources: new Set(),
-                contributionScore: 0
-            })
-        }
+    // Heuristics
+    MAX_SHARED_FUNDER = 5
+    RAPID_CLUSTER_SIZE = 10
+    RAPID_TIME_WINDOW = 60 * 60 // 1 hour
 
-        const w = this.wallets.get(wallet)!
-
-        if (from) {
-            w.inboundTx++
-            w.fundingSources.add(from)
-        }
-
-        w.contributionScore += contributionScore
+    constructor(graph: TrustGraph) {
+        this.graph = graph
     }
 
     /**
-     * Main scoring function
+     * Entry point
      */
-    scoreWallet(wallet: string): RiskScore {
-        const w = this.wallets.get(wallet)
+    scoreWallet(address: string): WalletTrust {
+        const flags: string[] = []
+        let trust = this.graph.getRawTrust(address)
 
-        if (!w) {
-            return {
-                wallet,
-                trust: 0,
-                risk: 100,
-                flags: ["no_history"]
+        // 1. Cluster risk
+        const cluster = this.graph.getCluster(address)
+        if (cluster.length > this.RAPID_CLUSTER_SIZE) {
+            flags.push("sybil_cluster")
+            trust *= 0.4
+        }
+
+        // 2. Shared funding
+        const funders = this.graph.getFunders(address)
+        const suspicious = funders.filter(f => f.count > this.MAX_SHARED_FUNDER)
+        if (suspicious.length > 0) {
+            flags.push("shared_funding")
+            trust *= 0.5
+        }
+
+        // 3. Burned wallets
+        if (this.graph.isBurned(address)) {
+            flags.push("burned")
+            trust *= 0.2
+        }
+
+        // 4. Fresh wallet penalty
+        const age = this.graph.getWalletAge(address)
+        if (age < this.RAPID_TIME_WINDOW) {
+            flags.push("new_wallet")
+            trust *= 0.7
+        }
+
+        // 5. Continuity bonus
+        const continuity = this.graph.getContinuityWeight(address)
+        trust += continuity
+
+        const risk = Math.max(0, 100 - trust)
+
+        return {
+            address,
+            trust: Math.round(trust),
+            risk: Math.round(risk),
+            flags
+        }
+    }
+
+    /**
+     * Detect Sybil farms
+     */
+    detectSybilCluster(address: string): string[] {
+        const cluster = this.graph.getCluster(address)
+        if (cluster.length < this.RAPID_CLUSTER_SIZE) return []
+
+        const funders = new Map<string, number>()
+
+        for (const wallet of cluster) {
+            const sources = this.graph.getFunders(wallet)
+            for (const s of sources) {
+                funders.set(s.address, (funders.get(s.address) || 0) + 1)
             }
         }
 
-        let trust = 50
-        let risk = 0
-        const flags: string[] = []
-
-        // 1. Contribution power
-        trust += Math.min(40, w.contributionScore / 10)
-
-        // 2. Age bonus
-        const ageDays = (Date.now() / 1000 - w.firstSeen) / 86400
-        trust += Math.min(20, ageDays)
-
-        // 3. Sybil detection: too many wallets funded by same source
-        if (w.fundingSources.size === 1 && w.inboundTx > 5) {
-            risk += 50
-            flags.push("single_funder_cluster")
+        for (const [addr, count] of funders.entries()) {
+            if (count > this.MAX_SHARED_FUNDER) {
+                return cluster
+            }
         }
 
-        // 4. New wallet + high activity = suspicious
-        if (ageDays < 2 && w.inboundTx > 3) {
-            risk += 30
-            flags.push("fresh_wallet_burst")
-        }
-
-        // Normalize
-        trust = Math.max(0, Math.min(100, trust - risk))
-        risk = Math.max(0, Math.min(100, risk))
-
-        return {
-            wallet,
-            trust,
-            risk,
-            flags
-        }
+        return []
     }
 }
