@@ -1,76 +1,135 @@
 /**
- * TrustGraph
- * Stores human-linked wallets and reputation flow
+ * OCG Trust Graph
+ * The canonical source of wallet → human → reputation mapping
  */
 
-export type HumanNode = {
-    id: string
-    wallets: Set<string>
-    trust: number
+export type ContinuityLink = {
+    from: string
+    to: string
+    weight: number
+}
+
+export type FundingEdge = {
+    address: string
+    count: number
 }
 
 export class TrustGraph {
-    humans = new Map<string, HumanNode>()     // humanId → node
-    walletToHuman = new Map<string, string>() // wallet → humanId
+    // wallet → base reputation (from ArcVault NFTs etc)
+    reputation = new Map<string, number>()
 
-    /**
-     * Create or get human identity
-     */
-    getHuman(wallet: string): HumanNode {
-        const existing = this.walletToHuman.get(wallet)
-        if (existing) return this.humans.get(existing)!
+    // wallet → wallets it claims to be same human
+    continuity = new Map<string, ContinuityLink[]>()
 
-        const id = crypto.randomUUID()
+    // wallet → wallets that funded it
+    funders = new Map<string, FundingEdge[]>()
 
-        const human: HumanNode = {
-            id,
-            wallets: new Set([wallet]),
-            trust: 0
+    // wallet → timestamp
+    createdAt = new Map<string, number>()
+
+    // wallet → burned flag
+    burned = new Set<string>()
+
+    /* ------------------ REPUTATION ------------------ */
+
+    addReputation(address: string, score: number) {
+        const prev = this.reputation.get(address) || 0
+        this.reputation.set(address, prev + score)
+    }
+
+    getRawTrust(address: string): number {
+        return this.reputation.get(address) || 0
+    }
+
+    /* ------------------ CONTINUITY ------------------ */
+
+    linkHuman(from: string, to: string, weight: number) {
+        if (!this.continuity.has(to)) {
+            this.continuity.set(to, [])
         }
 
-        this.humans.set(id, human)
-        this.walletToHuman.set(wallet, id)
-
-        return human
+        this.continuity.get(to)!.push({
+            from,
+            to,
+            weight
+        })
     }
 
-    /**
-     * Link two wallets as same human
-     */
-    linkHuman(from: string, to: string, transferredTrust: number) {
-        const h1 = this.getHuman(from)
-        const h2 = this.getHuman(to)
+    getContinuityWeight(address: string): number {
+        const links = this.continuity.get(address) || []
+        return links.reduce((sum, l) => sum + l.weight, 0)
+    }
 
-        // Already same human
-        if (h1.id === h2.id) return
+    /* ------------------ FUNDING ------------------ */
 
-        // Merge smaller into larger
-        const main = h1.wallets.size >= h2.wallets.size ? h1 : h2
-        const other = main === h1 ? h2 : h1
-
-        for (const w of other.wallets) {
-            main.wallets.add(w)
-            this.walletToHuman.set(w, main.id)
+    addFunding(from: string, to: string) {
+        if (!this.funders.has(to)) {
+            this.funders.set(to, [])
         }
 
-        main.trust += transferredTrust
+        const list = this.funders.get(to)!
+        const existing = list.find(f => f.address === from)
 
-        this.humans.delete(other.id)
+        if (existing) {
+            existing.count++
+        } else {
+            list.push({ address: from, count: 1 })
+        }
     }
 
-    /**
-     * Get all wallets for a human
-     */
-    getHumanWallets(wallet: string): string[] {
-        const h = this.getHuman(wallet)
-        return [...h.wallets]
+    getFunders(address: string): FundingEdge[] {
+        return this.funders.get(address) || []
     }
 
-    /**
-     * Get trust score of a human
-     */
-    getHumanTrust(wallet: string): number {
-        const h = this.getHuman(wallet)
-        return h.trust
+    /* ------------------ CLUSTERS ------------------ */
+
+    getCluster(address: string): string[] {
+        const visited = new Set<string>()
+        const stack = [address]
+
+        while (stack.length > 0) {
+            const current = stack.pop()!
+            if (visited.has(current)) continue
+            visited.add(current)
+
+            const links = this.continuity.get(current) || []
+            for (const l of links) {
+                stack.push(l.from)
+            }
+        }
+
+        return Array.from(visited)
+    }
+
+    /* ------------------ LIFECYCLE ------------------ */
+
+    registerWallet(address: string, timestamp: number) {
+        if (!this.createdAt.has(address)) {
+            this.createdAt.set(address, timestamp)
+        }
+    }
+
+    getWalletAge(address: string): number {
+        const created = this.createdAt.get(address)
+        if (!created) return 0
+        return Math.floor(Date.now() / 1000) - created
+    }
+
+    burnWallet(address: string) {
+        this.burned.add(address)
+    }
+
+    isBurned(address: string): boolean {
+        return this.burned.has(address)
+    }
+
+    /* ------------------ DEBUG ------------------ */
+
+    exportGraph() {
+        return {
+            reputation: Object.fromEntries(this.reputation),
+            continuity: Object.fromEntries(this.continuity),
+            funders: Object.fromEntries(this.funders)
+        }
     }
 }
