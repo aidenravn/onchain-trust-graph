@@ -1,84 +1,62 @@
 import { ethers } from "ethers"
-import { TrustGraph } from "./graph"
-import ArcVaultABI from "./abis/ArcVault.json"
+import { RiskEngine } from "./risk"
 
-/*
-    ArcVault Indexer
-
-    Listens to ContributionNFTUpgradeable events
-    and materializes them into OCG identity nodes.
-*/
+/**
+ * Listens to ArcVault Contribution NFT contract
+ * and feeds Trust Scores into OCG
+ */
 
 export class ArcVaultIndexer {
     provider: ethers.Provider
     contract: ethers.Contract
-    graph: TrustGraph
+    risk: RiskEngine
 
     constructor(
         rpc: string,
-        arcVaultAddress: string,
-        graph: TrustGraph
+        contractAddress: string,
+        abi: any,
+        risk: RiskEngine
     ) {
         this.provider = new ethers.JsonRpcProvider(rpc)
-        this.contract = new ethers.Contract(
-            arcVaultAddress,
-            ArcVaultABI,
-            this.provider
-        )
-        this.graph = graph
+        this.contract = new ethers.Contract(contractAddress, abi, this.provider)
+        this.risk = risk
     }
 
-    async start() {
-        console.log("🧭 ArcVault indexer online")
+    start() {
+        console.log("ArcVault Indexer started")
 
+        // Minted contributions
         this.contract.on(
             "ContributionMinted",
-            async (tokenId, to, category, score, approver, cid) => {
-                await this.indexToken(tokenId)
+            (tokenId, to, category, score, approver, cid) => {
+                this.handleContribution(to, category, score)
             }
         )
 
+        // Updated contributions
         this.contract.on(
             "ContributionUpdated",
-            async (tokenId) => {
-                await this.indexToken(tokenId)
+            (tokenId, score, approver, cid) => {
+                this.contract.ownerOf(tokenId).then((owner: string) => {
+                    this.handleContribution(owner, null, score)
+                })
             }
         )
     }
 
-    async indexToken(tokenId: bigint) {
-        const info = await this.contract.info(tokenId)
-        const owner = await this.contract.ownerOf(tokenId)
+    handleContribution(wallet: string, category: number | null, score: number) {
+        const base = score
 
-        const node = {
-            type: "arcvault",
-            tokenId: tokenId.toString(),
-            owner,
-            category: Number(info.category),
-            score: Number(info.score),
-            approver: info.approver,
-            cid: info.cid
-        }
+        const weight =
+            category === 0 ? 1 :
+            category === 1 ? 2 :
+            category === 2 ? 5 :
+            1
 
-        const nodeId = this.graph.hash(node)
+        const trust = base * weight
 
-        // Remove old node for this token
-        this.graph.removeByKey(`arcvault:${tokenId}`)
+        this.risk.addContribution(wallet, trust)
 
-        // Insert new identity node
-        this.graph.insert({
-            id: nodeId,
-            key: `arcvault:${tokenId}`,
-            owner,
-            weight: info.score,
-            data: node
-        })
-
-        console.log("🔗 ArcVault → OCG", {
-            token: tokenId.toString(),
-            owner,
-            score: info.score,
-            nodeId
-        })
+        console.log(`Trust +${trust} → ${wallet}`)
     }
 }
