@@ -1,86 +1,91 @@
+import { ethers } from "ethers"
 import { TrustGraph } from "./graph"
 import { RiskEngine } from "./risk"
 
-/*
-    Continuity Engine
+/**
+ * OCG-1 Human Continuity Engine
+ * Implements cryptographic wallet → wallet identity transfer
+ */
 
-    Links wallets across migrations, smart wallets,
-    and device changes using cryptographic & social signals.
-*/
-
-export type ContinuityProof = {
+export type ContinuityEdge = {
     from: string
     to: string
-    confidence: number   // 0 → 100
-    valid: boolean
-    reasons: string[]
+    issuedAt: number
+    expiresAt: number
+    nonce: number
+    confidence: number
 }
 
 export class ContinuityEngine {
     graph: TrustGraph
     risk: RiskEngine
 
+    // replay protection
+    usedNonces = new Set<string>()
+
+    domain = {
+        name: "OnChainTrustGraph",
+        version: "1"
+    }
+
+    types = {
+        HumanContinuity: [
+            { name: "from", type: "address" },
+            { name: "to", type: "address" },
+            { name: "issuedAt", type: "uint256" },
+            { name: "expiresAt", type: "uint256" },
+            { name: "nonce", type: "uint256" },
+            { name: "scope", type: "string" }
+        ]
+    }
+
     constructor(graph: TrustGraph, risk: RiskEngine) {
         this.graph = graph
         this.risk = risk
     }
 
-    prove(oldWallet: string, newWallet: string): ContinuityProof {
-        const reasons: string[] = []
-        let score = 0
-
-        // 1️⃣ Shared ArcVault history
-        const oldNodes = this.graph.findByOwner(oldWallet)
-        const newNodes = this.graph.findByOwner(newWallet)
-
-        for (const o of oldNodes) {
-            for (const n of newNodes) {
-                if (o.data.cid === n.data.cid && o.data.type === "arcvault") {
-                    score += 40
-                    reasons.push("shared_contribution")
-                }
-            }
+    verify(message: any, signature: string, chainId: number, verifyingContract: string) {
+        const domain = {
+            ...this.domain,
+            chainId,
+            verifyingContract
         }
 
-        // 2️⃣ Same approvers
-        const oldApprovers = new Set(oldNodes.map(n => n.data.approver))
-        const newApprovers = new Set(newNodes.map(n => n.data.approver))
+        const signer = ethers.verifyTypedData(
+            domain,
+            this.types,
+            message,
+            signature
+        )
 
-        for (const a of oldApprovers) {
-            if (newApprovers.has(a)) {
-                score += 20
-                reasons.push("shared_approver")
-            }
+        return signer.toLowerCase() === message.from.toLowerCase()
+    }
+
+    register(message: any, signature: string, chainId: number, verifyingContract: string) {
+        if (Date.now() / 1000 > message.expiresAt) {
+            throw new Error("Continuity expired")
         }
 
-        // 3️⃣ Trust level consistency
-        const oldTrust = this.risk.scoreWallet(oldWallet).trust
-        const newTrust = this.risk.scoreWallet(newWallet).trust
-
-        const diff = Math.abs(oldTrust - newTrust)
-
-        if (diff < 20) {
-            score += 20
-            reasons.push("trust_continuity")
+        const key = `${message.from}:${message.nonce}`
+        if (this.usedNonces.has(key)) {
+            throw new Error("Replay attack")
         }
 
-        // 4️⃣ No Sybil jump
-        const oldRisk = this.risk.scoreWallet(oldWallet)
-        const newRisk = this.risk.scoreWallet(newWallet)
+        const valid = this.verify(message, signature, chainId, verifyingContract)
+        if (!valid) throw new Error("Invalid signature")
 
-        if (!oldRisk.sybil && !newRisk.sybil) {
-            score += 20
-            reasons.push("non_sybil")
-        }
+        this.usedNonces.add(key)
 
-        const confidence = Math.min(100, score)
+        const fromTrust = this.risk.scoreWallet(message.from).trust
+        const decay = 0.9
+        const transferred = Math.round(fromTrust * decay)
+
+        this.graph.linkHuman(message.from, message.to, transferred)
 
         return {
-            from: oldWallet,
-            to: newWallet,
-            confidence,
-            valid: confidence >= 60,
-            reasons
+            from: message.from,
+            to: message.to,
+            transferredTrust: transferred
         }
     }
 }
