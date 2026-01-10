@@ -59,6 +59,9 @@ human = cryptographic continuity across wallets
 
 
 ⸻
+
+🧩 Architecture
+
 +--------------------------+
 |      ArcVault NFTs       |
 |   (contributions, DAO)   |
@@ -76,7 +79,6 @@ human = cryptographic continuity across wallets
 |        (graph.ts)        |
 +------------+-------------+
              |
-             |
    +---------+---------+
    |                   |
    v                   v
@@ -87,14 +89,14 @@ human = cryptographic continuity across wallets
         |                      |
         v                      v
  Wallet Trust Score     Wallet → Wallet Proof
-             \                /
-              \              /
-               \            /
-                v          v
+              \                /
+               \              /
+                v            v
            +----------------------+
            |        REST API       |
            |      (server.ts)      |
            +----------------------+
+
 
 ⸻
 
