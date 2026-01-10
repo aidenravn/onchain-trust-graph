@@ -1,11 +1,12 @@
 🧠 On-Chain Trust Graph (OCG)
 
 Cryptographically Provable Human Continuity
+
 Demo / Testnet / Research Only
 
 ⸻
 
-⚠️ LEGAL & SECURITY NOTICE
+⚠️ Legal & Security Notice
 
 IMPORTANT — READ BEFORE USING
 
@@ -33,11 +34,11 @@ On-Chain Trust Graph (OCG) is a cryptographic identity layer for Web3.
 
 It allows wallets to prove:
 
-“I am still the same human”
+“I am still the same human.”
 
-even when devices, keys, or wallets change.
+…even when devices, keys, or wallets change.
 
-OCG transforms:
+OCG turns:
 	•	Contribution NFTs
 	•	DAO approvals
 	•	On-chain history
@@ -52,60 +53,73 @@ Traditional Web3 identity:
 
 wallet = human
 
-OCG changes this to:
+OCG changes it to:
 
 human = cryptographic continuity across wallets
 
-Your reputation becomes portable, verifiable, and non-custodial.
 
 ⸻
 
 🧩 Architecture
 
-This system is built as a data pipeline:
-
-ArcVault NFTs
-  ↓
-arcvault.ts   (on-chain indexer)
-  ↓
-graph.ts      (trust graph)
-  ↓
-risk.ts       (trust scoring & sybil detection)
-  ↓
-continuity.ts (wallet → wallet human continuity)
-  ↓
-server.ts     (REST API)
-
-And logically:
-
-arcvault.ts   → collects contribution NFTs
-graph.ts      → builds the wallet ↔ human graph
-risk.ts       → calculates trust & detects bots
-continuity.ts → verifies "same human" signatures
-server.ts     → exposes everything via HTTP
++--------------------+
+|   ArcVault NFTs    |
+| (Contribs, DAO)    |
++---------+----------+
+          |
+          v
++--------------------+
+|    OCG Indexer     |
+|  (arcvault.ts)    |
++---------+----------+
+          |
+          v
++--------------------+
+|    Trust Graph     |
+|    (graph.ts)     |
++---------+----------+
+          |
+     +----+----+
+     |         |
+     v         v
++-----------+  +-----------------+
+| Risk Eng. |  | Continuity Eng.  |
+| (risk.ts)|  | (continuity.ts)  |
++-----+-----+  +--------+--------+
+      |                 |
+      v                 v
+ Trust Score      Wallet→Wallet
+                    Proof
+        \              /
+         \            /
+          v          v
+        +------------------+
+        |     REST API     |
+        |   (server.ts)   |
+        +------------------+
 
 
 ⸻
 
-🧠 What OCG Provides
+🧠 What It Does
 
-Capability	Meaning
-Trust Score	How credible a wallet is
-Sybil Detection	Is this likely a bot or farm?
-Continuity Proof	Are two wallets the same human?
-Contribution Identity	NFTs define reputation
-Migration Safety	Reputation survives wallet changes
+Capability	Description
+Trust score	How credible a wallet is
+Sybil detection	Whether a wallet is likely a bot or farm
+Continuity proof	Whether two wallets belong to the same human
+Contribution identity	NFTs define reputation
+Migration safety	Reputation survives wallet changes
 
 
 ⸻
 
 🔌 Integrations
 
-OCG is designed to plug into:
-	•	Seedless Wallet → migrate reputation to new smart wallets
+OCG is designed to integrate with:
+	•	Seedless Wallets → move reputation to new smart wallets
 	•	TxGuard → block risky or bot-like senders
-	•	VEC (Voluntary Execution Context) → allow actions only if same human
-	•	DAOs → Sybil-resistant voting & airdrops
+	•	VEC → allow execution only if the same human
+	•	DAOs → Sybil-resistant airdrops & voting
 
 ⸻
 
@@ -115,7 +129,7 @@ onchain-trust-graph/
 ├── indexer/
 │   ├── graph.ts
 │   ├── arcvault.ts
-│   ├── risk.ts
+│   └── risk.ts
 │   └── continuity.ts
 │
 ├── api/
@@ -123,7 +137,7 @@ onchain-trust-graph/
 │
 └── README.md
 
-Run:
+Run
 
 export RPC=https://your-testnet-rpc
 export ARCVault=0xArcVaultContract
@@ -131,7 +145,7 @@ export ARCVault=0xArcVaultContract
 npm install
 npm start
 
-API:
+API
 
 GET /wallet/:address
 GET /continuity?from=0xA&to=0xB
@@ -142,11 +156,11 @@ GET /graph
 
 🧠 Why This Matters
 
-Web3 today has:
-	•	bots
-	•	sybil farms
-	•	fake wallets
-	•	identity loss when keys change
+Web3 today suffers from:
+	•	Bots
+	•	Sybil farms
+	•	Fake wallets
+	•	Identity loss when keys change
 
 OCG creates:
 
@@ -160,23 +174,21 @@ Just math, signatures, and reputation.
 
 ⸻
 
-🧑‍🚀 Created by
+🧑‍🚀 Created By
 
 ravN
 Builder at the intersection of AI × Web3 × Cryptographic Trust
 
-Building systems where humans can prove they are real —
-without revealing who they are.
+Building systems where humans can prove they are real — without revealing who they are.
 
 ⸻
 
 ⚠️ Final Reminder
 
 This is a testnet-only experimental protocol.
-
-Do NOT use with real money.
-Do NOT assume safety.
-Do NOT deploy on mainnet.
+	•	Do NOT use with real money
+	•	Do NOT assume safety
+	•	Do NOT deploy on mainnet
 
 This is research infrastructure.
 
