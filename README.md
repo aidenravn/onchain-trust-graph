@@ -60,44 +60,18 @@ human = cryptographic continuity across wallets
 
 ⸻
 
-🧩 Architecture
+flowchart TD
+    A[ArcVault NFTs<br/>(Contributions, DAO)] --> B[OCG Indexer<br/>(arcvault.ts)]
+    B --> C[Trust Graph<br/>(graph.ts)]
 
-+--------------------------+
-|      ArcVault NFTs       |
-|   (contributions, DAO)   |
-+------------+-------------+
-             |
-             v
-+--------------------------+
-|       OCG Indexer        |
-|      (arcvault.ts)       |
-+------------+-------------+
-             |
-             v
-+--------------------------+
-|        Trust Graph       |
-|        (graph.ts)        |
-+------------+-------------+
-             |
-   +---------+---------+
-   |                   |
-   v                   v
-+----------------+   +-------------------+
-|  Risk Engine   |   |  Continuity Engine |
-|   (risk.ts)    |   |  (continuity.ts)   |
-+-------+--------+   +---------+---------+
-        |                      |
-        v                      v
- Wallet Trust Score     Wallet → Wallet Proof
-              \                /
-               \              /
-                v            v
-           +----------------------+
-           |        REST API       |
-           |      (server.ts)      |
-           +----------------------+
+    C --> D[Risk Engine<br/>(risk.ts)]
+    C --> E[Continuity Engine<br/>(continuity.ts)]
 
+    D --> F[Wallet Trust Score]
+    E --> G[Wallet → Wallet Proof]
 
+    F --> H[REST API<br/>(server.ts)]
+    G --> H
 ⸻
 
 🧠 What It Does
