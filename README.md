@@ -59,7 +59,6 @@ human = cryptographic continuity across wallets
 
 
 ⸻
-
             ┌────────────────────────┐
             │   ArcVault NFTs         │
             │  (contributions)        │
@@ -77,15 +76,17 @@ human = cryptographic continuity across wallets
                │  (graph.ts)     │
                └────────┬───────┘
                         │
-            ┌───────────┼────────────┐
-            ▼                           ▼
-   ┌────────────────┐        ┌────────────────┐
-   │ Risk Engine     │        │ Continuity     │
-   │  (risk.ts)      │        │  Engine        │
-   └───────┬─────────┘        └───────┬─────────┘
-           │                          │
-           ▼                          ▼
-  wallet trust score        old → new wallet proof
+            ┌───────────┴────────────┐
+            │                        │
+            ▼                        ▼
+   ┌────────────────┐      ┌────────────────┐
+   │ Risk Engine     │      │ Continuity      │
+   │  (risk.ts)      │      │  Engine         │
+   └───────┬─────────┘      └───────┬──────────┘
+           │                        │
+           ▼                        ▼
+  wallet trust score     old → new wallet proof
+                        (EIP-712)
 
                         │
                         ▼
