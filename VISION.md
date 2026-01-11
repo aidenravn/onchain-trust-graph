@@ -1,98 +1,93 @@
-🧠 On-Chain Trust Graph
+🧠 On-Chain Trust Graph (OCG)
 Proof of Human Continuity for Web3
-
-Web3 is growing fast, but some challenges still exist.
-	•	Sybil wallets can influence DAOs.
-	•	Reputation can disappear when wallets change.
-
-OCG offers a solution.
-
-OCG is a cryptographic layer that lets a human remain the same even if their wallets don’t.
-	•	No KYC
-	•	No biometrics
-	•	No centralized identity
-
-Just signatures, math, and on-chain history.
-
-⸻
+Web3 is growing fast — but fundamental human problems remain unresolved.
+* Sybil wallets can influence DAOs and governance
+* Reputation disappears when wallets change
+* Keys are remembered, humans are not
+OCG offers a different primitive.
+OCG is a cryptographic identity and reputation layer that allows a human to remain continuous — even when their wallets are not.
+* No KYC
+* No biometrics
+* No centralized identity
+Just signatures, math, time, and on-chain history. No oracles. No authorities.
 
 🔗 From wallets to humans
-
-Today Web3 thinks:
+Today, Web3 assumes:
 wallet = human
-
-OCG upgrades this to:
+OCG upgrades this assumption to:
 human = cryptographic continuity across wallets
-	•	If you lose your keys,
-	•	Upgrade to a smart wallet,
-	•	Or get hacked —
-your reputation doesn’t vanish.
-It moves with you.
-
-⸻
+If you:
+* Lose your keys
+* Upgrade to a smart account
+* Migrate devices
+* Or suffer a compromise
+Your reputation does not vanish. It moves with you — provably.
+Wallets become containers. Humans become the persistent entity.
 
 🧬 Reputation becomes portable
-
-OCG turns:
-	•	Contribution NFTs
-	•	DAO approvals
-	•	On-chain history
-
+OCG transforms:
+* Contribution NFTs
+* DAO roles and approvals
+* On-chain behavior and history
 into a living trust graph.
+This graph reflects:
+* Who contributed value
+* Who behaved consistently
+* Who earned trust over time
+And where trust weakened or broke — based purely on observable behavior.
+No opinions. No centralized judgment. Only cryptographic evidence and time.
 
-This graph knows:
-	•	Who contributed
-	•	Who behaved honestly
-	•	Who stayed consistent over time
-
-And who didn’t.
-
-⸻
-
-🛡️ Built for a challenging internet
-
-OCG assumes attackers exist and uses:
-	•	Sybil detection
-	•	Trust decay
-	•	Funding analysis
-	•	Signature-based continuity
-
-to make fake identities costly and real humans powerful.
-
-⸻
+🛡️ Built for a hostile internet
+OCG assumes adversaries exist.
+The system is designed to make fake identities expensive and real human continuity powerful through:
+* Sybil resistance via funding and cluster analysis
+* Trust decay over time without consistent behavior
+* Signature-based wallet-to-wallet continuity (EIP-712)
+* Contribution-weighted reputation signals
+Trust is not granted. It is earned, preserved, or lost — transparently.
 
 🔌 Plug in, don’t replace
-
-OCG doesn’t fight your stack — it strengthens it.
-Works with:
-	•	Seedless wallets
-	•	Account abstraction
-	•	DAOs
-	•	Airdrops
-	•	Voting
-	•	TxGuard
-
-Anywhere identity matters.
-
-⸻
+OCG does not compete with your stack. It strengthens it.
+Designed to integrate with:
+* Seedless wallets
+* Account abstraction (ERC-4337)
+* DAOs and governance systems
+* Airdrops and contribution rewards
+* Voting mechanisms
+* Transaction security layers (e.g. TxGuard)
+Anywhere identity, trust, or reputation matters.
 
 🌍 Why this is inevitable
-
 Web3 cannot reach its full potential without trust.
-But trust doesn’t come from governments or companies.
+But trust cannot come from:
+* Governments
+* Corporations
+* Centralized registries
+Trust emerges from:
+* Behavior
+* Cryptography
+* Time
+OCG is that missing layer.
+Not identity as surveillance — but identity as continuity.
 
-It comes from:
-	•	Behavior
-	•	Cryptography
-	•	Time
+🚫 Non-Goals (Explicit Boundaries)
+OCG is not:
+* A global identity system
+* A KYC replacement
+* A social credit score
+* A surveillance or behavioral control mechanism
+OCG does not aim to define who you are — only to preserve what you have done, cryptographically.
 
-OCG is that layer.
+🧪 Experimental Status
+OCG is:
+* Experimental
+* Evolving
+* Not audited
+* Not production-safe
+Built in public. Improved through scrutiny.
+This is research infrastructure — not a finished product.
 
-⸻
-
-🧪 Experimental. Innovative. Necessary.
-	•	OCG is not fully safe.
-	•	OCG is still evolving.
-	•	OCG is not audited.
-
-But OCG is the missing primitive Web3 needs.
+🧭 Final Note
+Blockchains already remember transactions forever. OCG asks a different question:
+What if they could remember humans — without owning them?
+That is the problem this project explores.
