@@ -1,21 +1,16 @@
 🧠 On-Chain Trust Graph
-
 Proof of Human Continuity for Web3
 
-Web3 today is broken.
+Web3 is growing fast, but some challenges still exist.
+	•	Sybil wallets can influence DAOs.
+	•	Reputation can disappear when wallets change.
 
-Bots farm airdrops.
-Sybil wallets control DAOs.
-Reputation disappears when keys change.
+OCG offers a solution.
 
-OCG fixes this.
-
-OCG is a cryptographic layer that lets a human stay the same —
-even when their wallets don’t.
-
-No KYC.
-No biometrics.
-No centralized identity.
+OCG is a cryptographic layer that lets a human remain the same even if their wallets don’t.
+	•	No KYC
+	•	No biometrics
+	•	No centralized identity
 
 Just signatures, math, and on-chain history.
 
@@ -24,19 +19,14 @@ Just signatures, math, and on-chain history.
 🔗 From wallets to humans
 
 Today Web3 thinks:
-
 wallet = human
 
-OCG upgrades it to:
-
+OCG upgrades this to:
 human = cryptographic continuity across wallets
-
-If you lose your keys,
-if you upgrade to a smart wallet,
-if you get hacked —
-
-your reputation doesn’t die.
-
+	•	If you lose your keys,
+	•	Upgrade to a smart wallet,
+	•	Or get hacked —
+your reputation doesn’t vanish.
 It moves with you.
 
 ⸻
@@ -50,35 +40,31 @@ OCG turns:
 
 into a living trust graph.
 
-A graph that knows:
-	•	who contributed
-	•	who behaved honestly
-	•	who stayed consistent over time
+This graph knows:
+	•	Who contributed
+	•	Who behaved honestly
+	•	Who stayed consistent over time
 
 And who didn’t.
 
 ⸻
 
-🛡️ Built for a hostile internet
+🛡️ Built for a challenging internet
 
-OCG assumes attackers exist.
-
-So it uses:
+OCG assumes attackers exist and uses:
 	•	Sybil detection
-	•	trust decay
-	•	funding analysis
-	•	signature-based continuity
+	•	Trust decay
+	•	Funding analysis
+	•	Signature-based continuity
 
-to make fake identities expensive and real humans powerful.
+to make fake identities costly and real humans powerful.
 
 ⸻
 
-🔌 Plug-in, don’t replace
+🔌 Plug in, don’t replace
 
-OCG doesn’t fight your stack.
-It upgrades it.
-
-Use it with:
+OCG doesn’t fight your stack — it strengthens it.
+Works with:
 	•	Seedless wallets
 	•	Account abstraction
 	•	DAOs
@@ -92,22 +78,21 @@ Anywhere identity matters.
 
 🌍 Why this is inevitable
 
-Web3 cannot scale without trust.
-But trust cannot come from governments or companies.
+Web3 cannot reach its full potential without trust.
+But trust doesn’t come from governments or companies.
 
-It must come from:
-	•	behavior
-	•	cryptography
-	•	time
+It comes from:
+	•	Behavior
+	•	Cryptography
+	•	Time
 
 OCG is that layer.
 
 ⸻
 
-🧪 Experimental. Dangerous. Necessary.
+🧪 Experimental. Innovative. Necessary.
+	•	OCG is not fully safe.
+	•	OCG is still evolving.
+	•	OCG is not audited.
 
-OCG is not safe.
-OCG is not finished.
-OCG is not audited.
-
-OCG is the missing primitive Web3 needs.
+But OCG is the missing primitive Web3 needs.
