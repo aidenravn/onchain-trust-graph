@@ -1,3 +1,9 @@
+We do not make Sybil impossible.
+We make it uneconomical, unstable, and visible.
+
+We do not guarantee identity.
+We compute confidence in human continuity.
+
 🧠 On-Chain Trust Graph (OCG)
 Proof of Human Continuity for Web3
 Web3 is growing fast — but fundamental human problems remain unresolved.
