@@ -192,4 +192,52 @@ This is a testnet-only experimental protocol.
 
 This is research infrastructure.
 
+
 ⸻
+
+🧭 Ethical Guardrails
+
+The chain may remember.
+But it must never lock humans in.
+
+OCG is built on a strict ethical boundary:
+
+We allow cryptographic memory —
+but we reject permanent judgment.
+
+This means:
+
+OCG can record:
+	•	Contributions
+	•	Continuity
+	•	On-chain behavior
+
+But OCG must never become:
+	•	A global blacklist
+	•	A permanent reputation prison
+	•	A social credit system
+	•	A tool for exclusion, censorship, or discrimination
+
+Trust in OCG is contextual, probabilistic, and decaying —
+not absolute, permanent, or globally enforceable.
+
+Every score:
+	•	Can change
+	•	Can recover
+	•	Can be rebuilt
+	•	Can be ignored by applications
+
+OCG does not decide who is allowed to exist.
+It only provides cryptographic signals about what has happened.
+
+Applications choose how (or if) they use those signals.
+
+Humans always retain the right to:
+	•	Start over
+	•	Migrate
+	•	Rebuild trust
+	•	Exit the graph
+
+OCG provides memory —
+never destiny.
+
