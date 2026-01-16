@@ -1,4 +1,4 @@
-🧠 On-Chain Trust Graph (OCG)
+🧠 OnChain Trust Graph (OCG)
 
 Proof of Human Continuity for Web3
 
@@ -10,7 +10,7 @@ We compute confidence in human continuity.
 
 ⸻
 
-Web3 is growing fast — but fundamental human problems remain unresolved:
+Finance 2.0 is growing fast — but fundamental human problems remain unresolved:
 • Sybil wallets can influence DAOs and governance
 • Reputation disappears when wallets change
 • Keys are remembered, humans are not
@@ -29,7 +29,7 @@ No oracles. No authorities.
 
 🔗 From wallets to humans
 
-Today, Web3 assumes:
+Today, Finance 2.0 assumes:
 
 wallet = human
 
@@ -114,7 +114,7 @@ Anywhere identity, trust, or reputation matters.
 
 🌍 Why this is inevitable
 
-Web3 cannot reach its full potential without trust.
+Finance 2.0 cannot reach its full potential without trust.
 
 But trust cannot come from:
 • Governments
