@@ -1,6 +1,6 @@
-🧠 On-Chain Trust Graph (OCG)
+🧠 OnChain Trust Graph (OCG)
 
-Cryptographically Provable Human Continuity for Web3
+Cryptographically Provable Human Continuity for Finance 2.0
 Demo / Testnet / Research Only
 
 ⸻
@@ -47,7 +47,7 @@ into a graph-based trust representation.
 
 🔗 Core Idea
 
-Traditional Web3 assumption:
+Traditional Finance 2.0 assumption:
 
 wallet = human
 
