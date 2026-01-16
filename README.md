@@ -126,37 +126,6 @@ Integration is optional and application-defined.
 
 ⸻
 
-🧪 Demo Setup
-
-onchain-trust-graph/
-├── indexer/
-│   ├── graph.ts
-│   ├── arcvault.ts
-│   ├── risk.ts
-│   └── continuity.ts
-│
-├── api/
-│   └── server.ts
-│
-└── README.md
-
-Run
-
-export RPC=https://your-testnet-rpc
-export ARCVault=0xArcVaultContract
-
-npm install
-npm start
-
-API
-
-GET /wallet/:address
-GET /continuity?from=0xA&to=0xB
-GET /graph
-
-
-⸻
-
 🧠 Why This Matters
 
 Current Web3 systems struggle with:
