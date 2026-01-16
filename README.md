@@ -1,28 +1,27 @@
 🧠 On-Chain Trust Graph (OCG)
 
-Cryptographically Provable Human Continuity
-
+Cryptographically Provable Human Continuity for Web3
 Demo / Testnet / Research Only
 
 ⸻
 
 ⚠️ Legal & Security Notice
 
-IMPORTANT — READ BEFORE USING
+IMPORTANT — PLEASE READ CAREFULLY
 
-This repository and all associated smart contracts, indexers, APIs, and interfaces are provided strictly for educational, research, and testnet purposes.
+This repository and all associated smart contracts, indexers, APIs, and interfaces are provided strictly for educational, research, and testnet use.
 	1.	No Financial Advice
 Nothing in this repository constitutes financial, legal, or investment advice.
 	2.	No Production Use
-These contracts, indexers, and services are NOT audited and MUST NOT be used with real funds.
+All components are experimental, unaudited, and must not be used with real funds.
 	3.	No Liability
-The authors assume no responsibility for any loss, damage, or harm caused by using this software.
+The authors assume no responsibility for any loss, damage, or harm resulting from the use of this software.
 	4.	User Responsibility
 You are fully responsible for verifying all code, transactions, addresses, and signatures.
 	5.	No Guarantees
-This system makes no promises of security, correctness, or safety.
-	6.	Forking & Usage
-Forking or modifying this repository does not transfer liability to the original authors.
+No guarantees are made regarding security, correctness, or reliability.
+	6.	Forking & Modifications
+Forking or modifying this repository does not transfer any liability to the original authors.
 
 Use only in isolated test environments.
 
@@ -30,33 +29,34 @@ Use only in isolated test environments.
 
 🧬 What is OCG?
 
-On-Chain Trust Graph (OCG) is a cryptographic identity layer for Web3.
+On-Chain Trust Graph (OCG) is an experimental cryptographic identity and reputation layer for Web3.
 
-It allows wallets to prove:
+Its purpose is to explore whether wallets can prove human continuity over time, even when:
+	•	Keys are rotated
+	•	Devices are replaced
+	•	Wallets are migrated
 
-“I am still the same human.”
-
-…even when devices, keys, or wallets change.
-
-OCG turns:
+OCG aggregates on-chain signals such as:
 	•	Contribution NFTs
 	•	DAO approvals
-	•	On-chain history
+	•	Historical wallet behavior
 
-into a graph of cryptographic trust.
+into a graph-based trust representation.
 
 ⸻
 
 🔗 Core Idea
 
-Traditional Web3 identity:
+Traditional Web3 assumption:
 
 wallet = human
 
-OCG changes it to:
+OCG explores an alternative:
 
 human = cryptographic continuity across wallets
 
+Wallets are treated as containers.
+Continuity is inferred from cryptographic signals and time.
 
 ⸻
 
@@ -83,12 +83,12 @@ human = cryptographic continuity across wallets
      |         |
      v         v
 +-----------+  +-----------------+
-| Risk Eng. |  | Continuity Eng.  |
-| (risk.ts)|  | (continuity.ts)  |
+| Risk Eng. |  | Continuity Eng. |
+| (risk.ts)|  | (continuity.ts) |
 +-----+-----+  +--------+--------+
       |                 |
       v                 v
- Trust Score      Wallet→Wallet
+ Trust Score      Wallet → Wallet
                     Proof
         \              /
          \            /
@@ -104,22 +104,25 @@ human = cryptographic continuity across wallets
 🧠 What It Does
 
 Capability	Description
-Trust score	How credible a wallet is
-Sybil detection	Whether a wallet is likely a bot or farm
-Continuity proof	Whether two wallets belong to the same human
-Contribution identity	NFTs define reputation
+Trust score	Estimates wallet credibility based on observed signals
+Sybil signals	Detects likely bot or farm behavior (probabilistic)
+Continuity proof	Links wallets belonging to the same human
+Contribution identity	Reputation derived from NFTs and approvals
 Migration safety	Reputation survives wallet changes
 
+All outputs are signals, not enforcement.
 
 ⸻
 
 🔌 Integrations
 
-OCG is designed to integrate with:
-	•	Seedless Wallets → move reputation to new smart wallets
-	•	TxGuard → block risky or bot-like senders
-	•	VEC → allow execution only if the same human
-	•	DAOs → Sybil-resistant airdrops & voting
+OCG is designed to be composable with existing systems:
+	•	Seedless Wallets → migrate reputation to new accounts
+	•	TxGuard → flag risky or anomalous senders
+	•	VEC → restrict execution to continuous humans
+	•	DAOs → Sybil-resistant voting and airdrops
+
+Integration is optional and application-defined.
 
 ⸻
 
@@ -129,7 +132,7 @@ onchain-trust-graph/
 ├── indexer/
 │   ├── graph.ts
 │   ├── arcvault.ts
-│   └── risk.ts
+│   ├── risk.ts
 │   └── continuity.ts
 │
 ├── api/
@@ -156,81 +159,66 @@ GET /graph
 
 🧠 Why This Matters
 
-Web3 today suffers from:
-	•	Bots
-	•	Sybil farms
-	•	Fake wallets
-	•	Identity loss when keys change
+Current Web3 systems struggle with:
+	•	Sybil attacks
+	•	Bot-driven governance
+	•	Reputation loss when keys change
 
-OCG creates:
+OCG explores whether human continuity can be represented cryptographically:
+	•	No KYC
+	•	No biometrics
+	•	No centralized identity
 
-A cryptographic layer of human continuity
-
-Not KYC.
-Not biometrics.
-Not centralized.
-
-Just math, signatures, and reputation.
+Only signatures, math, time, and observable on-chain data.
 
 ⸻
 
-🧑‍🚀 Created By
-
-ravN
-Builder at the intersection of AI × Web3 × Cryptographic Trust
-
-Building systems where humans can prove they are real — without revealing who they are.
-
-⸻
 
 ⚠️ Final Reminder
 
-This is a testnet-only experimental protocol.
-	•	Do NOT use with real money
-	•	Do NOT assume safety
-	•	Do NOT deploy on mainnet
+This is testnet-only research infrastructure.
+	•	Do not use with real funds
+	•	Do not assume security
+	•	Do not deploy on mainnet
 
-This is research infrastructure.
-
+Expect breaking changes.
 
 ⸻
 
 🧭 Ethical Guardrails
 
-The chain may remember.
-But it must never lock humans in.
+Blockchains may remember —
+but they must never lock humans in.
 
-OCG is built on a strict ethical boundary:
+OCG is designed with explicit boundaries:
 
-We allow cryptographic memory —
-but we reject permanent judgment.
-
-This means:
-
-OCG can record:
+OCG may record:
 	•	Contributions
-	•	Continuity
+	•	Continuity signals
 	•	On-chain behavior
 
-But OCG must never become:
+OCG must never become:
 	•	A global blacklist
 	•	A permanent reputation prison
 	•	A social credit system
-	•	A tool for exclusion, censorship, or discrimination
+	•	A tool for censorship or exclusion
 
-Trust in OCG is contextual, probabilistic, and decaying —
-not absolute, permanent, or globally enforceable.
+Trust in OCG is:
+	•	Contextual
+	•	Probabilistic
+	•	Decaying over time
 
-Every score:
+Not absolute, permanent, or globally enforceable.
+
+Every signal:
 	•	Can change
 	•	Can recover
-	•	Can be rebuilt
 	•	Can be ignored by applications
 
 OCG does not decide who is allowed to exist.
-It only provides cryptographic signals about what has happened.
+It only exposes cryptographic history.
 
-Applications choose how (or if) they use those signals.
+Applications decide how — or whether — to use it.
 
 Humans always retain the right to:
 	•	Start over
@@ -238,6 +226,4 @@ Humans always retain the right to:
 	•	Rebuild trust
 	•	Exit the graph
 
-OCG provides memory —
-never destiny.
-
+OCG provides memory — not destiny.
