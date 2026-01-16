@@ -1,4 +1,4 @@
-🧠 OnChain Trust Graph (OCG)
+🧠 On-Chain Trust Graph (OCG)
 
 Proof of Human Continuity for Web3
 
