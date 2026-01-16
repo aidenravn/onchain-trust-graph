@@ -196,3 +196,11 @@ Humans always retain the right to:
 	•	Exit the graph
 
 OCG provides memory — not destiny.
+
+## UX Concept (Exploratory)
+
+![OCG UX Concept](onchain-trust-graph
+/ocg-ux-concept.png)
+
+This mockup illustrates the intended UX philosophy of OCG:
+quiet, non-judgmental, and contextual.
