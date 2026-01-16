@@ -62,6 +62,7 @@ Continuity is inferred from cryptographic signals and time.
 
 🧩 Architecture
 
+```text
 +--------------------+
 |   ArcVault NFTs    |
 | (Contribs, DAO)    |
@@ -97,8 +98,7 @@ Continuity is inferred from cryptographic signals and time.
         |     REST API     |
         |   (server.ts)   |
         +------------------+
-
-
+```
 ⸻
 
 🧠 What It Does
