@@ -1,4 +1,4 @@
-🧠 OnChain Trust Graph (OCG)
+🧠 On-Chain Trust Graph (OCG)
 
 Cryptographically Provable Human Continuity for Finance 2.0
 Demo / Testnet / Research Only
